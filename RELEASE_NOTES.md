@@ -2,6 +2,8 @@
 
 首个公开 alpha 版本。ncmelt 是一个本地运行的网易云 NCM 转换器，提供 Prism 风格的桌面界面、批量队列和同源 CLI。
 
+官网：https://11ly322.github.io/ncmelt/
+
 ## 下载
 
 - `ncmelt-Setup-0.1.1alpha.exe` — Windows 安装器
