@@ -127,6 +127,10 @@ code {
     margin-inline: auto;
 }
 
+.nowrap {
+    white-space: nowrap;
+}
+
 .skip-link {
     position: fixed;
     z-index: 100;
