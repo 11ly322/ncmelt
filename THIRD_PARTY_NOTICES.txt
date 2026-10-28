@@ -1,4 +1,4 @@
-# Third-party notices — ncmelt 0.1.1alpha
+# Third-party notices — ncmelt 0.1.2alpha
 
 ncmelt is distributed under the GNU General Public License v3.0 (see
 LICENSE). It bundles or depends on the following components.
@@ -63,9 +63,3 @@ LICENSE). It bundles or depends on the following components.
 
 - Project: https://www.python.org/
 - License: Python Software Foundation License.
-
-## Interface inspiration
-
-The workspace/panel layout and flat dark visual language are inspired by
-Prism (MIT, https://github.com/11ly322/Prism). No Prism source code is
-included in ncmelt.

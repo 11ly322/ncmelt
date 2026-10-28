@@ -1,4 +1,4 @@
-"""Visual tokens inspired by Prism's flat dark UI."""
+"""Visual tokens for ncmelt's dark desktop interface."""
 
 from __future__ import annotations
 

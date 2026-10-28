@@ -10,7 +10,7 @@ import customtkinter as ctk
 from . import APP_SUBTITLE, __version__ as APP_VERSION
 from . import theme as T
 from .formats import OUTPUT_FORMATS, format_by_id
-from .ui_components import SummaryBars, human_size, shrink_path
+from .ui_components import SummaryBars, human_size, shrink_path, tune_scrollable
 
 LOG = logging.getLogger(__name__)
 
@@ -26,7 +26,6 @@ class SidePanel(ctk.CTkFrame):
         self._quality_rows: dict[str, ctk.CTkFrame] = {}
         self._naming_buttons: dict[str, ctk.CTkButton] = {}
         self._overwrite_buttons: dict[str, ctk.CTkButton] = {}
-        self._scroll_job: str | None = None
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(3, weight=1)
@@ -43,12 +42,6 @@ class SidePanel(ctk.CTkFrame):
         self.refresh_format()
         self.refresh_switches()
         self.set_output_display()
-        self.bind("<Configure>", self._schedule_scrollbar, add="+")
-        self.body.bind("<Configure>", self._schedule_scrollbar, add="+")
-        self.body._parent_canvas.bind(
-            "<Configure>", self._schedule_scrollbar, add="+"
-        )
-        self.after(200, self._sync_scrollbar)
 
     def p(self, value: int) -> int:
         return self.app.px(value)
@@ -152,6 +145,7 @@ class SidePanel(ctk.CTkFrame):
         )
         self.body.grid(row=3, column=0, sticky="nsew")
         self.body.grid_columnconfigure(0, weight=1)
+        tune_scrollable(self.body, self.app.scale)
         self._tab_frames: dict[str, ctk.CTkFrame] = {}
         for key, _label in self.TABS:
             frame = ctk.CTkFrame(self.body, fg_color="transparent")
@@ -476,7 +470,6 @@ class SidePanel(ctk.CTkFrame):
                 btn.configure(fg_color=T.ACCENT, text_color="#FFFFFF")
             else:
                 btn.configure(fg_color="transparent", text_color=T.MUTED)
-        self._schedule_scrollbar()
 
     def refresh_format(self) -> None:
         current = self.app.format_id
@@ -638,7 +631,6 @@ class SidePanel(ctk.CTkFrame):
             self.action_status.configure(text=status)
         if summary is not None:
             self.summary_label.configure(text=summary)
-        self._schedule_scrollbar()
 
     def set_converting(self, converting: bool) -> None:
         if converting:
@@ -678,27 +670,6 @@ class SidePanel(ctk.CTkFrame):
         self.percent_label.configure(text="0%")
         self.action_status.configure(text="就绪", text_color=T.MUTED)
         self.summary_label.configure(text="添加 NCM 文件后即可开始")
-
-    def _schedule_scrollbar(self, _event=None) -> None:
-        if self._scroll_job is not None:
-            try:
-                self.after_cancel(self._scroll_job)
-            except ValueError:
-                pass
-        self._scroll_job = self.after(80, self._sync_scrollbar)
-
-    def _sync_scrollbar(self) -> None:
-        self._scroll_job = None
-        try:
-            first, last = self.body._parent_canvas.yview()
-            needed = (last - first) < 0.999
-            mapped = bool(self.body._scrollbar.winfo_ismapped())
-            if needed and not mapped:
-                self.body._scrollbar.grid()
-            elif not needed and mapped:
-                self.body._scrollbar.grid_remove()
-        except Exception:
-            LOG.debug("Side panel scrollbar sync failed", exc_info=True)
 
 
 class SettingsDialog(ctk.CTkToplevel):

@@ -1,4 +1,4 @@
-"""Main window for ncmelt, modelled on Prism's workspace/panel workflow."""
+"""Main window for ncmelt with workspace, side panel and status bar."""
 
 from __future__ import annotations
 
@@ -31,6 +31,7 @@ from .ui_components import (
     duration_text,
     human_size,
     truncate,
+    tune_scrollable,
 )
 from .ui_menu import MenuPopup
 from .ui_side import HelpDialog, SettingsDialog, SidePanel
@@ -89,7 +90,7 @@ class ConverterApp(ctk.CTk, TkinterDnD.DnDWrapper):
         self._dnd_registered: set[str] = set()
         self._drag_hide_job: str | None = None
         self._last_drop = (0.0, "")
-        self._list_sync_job: str | None = None
+        self._scroll_paint_job: str | None = None
         self._settings_dialog: SettingsDialog | None = None
         self._help_dialog: HelpDialog | None = None
 
@@ -276,10 +277,7 @@ class ConverterApp(ctk.CTk, TkinterDnD.DnDWrapper):
         )
         self.file_list.grid(row=1, column=0, sticky="nsew")
         self.file_list.grid_columnconfigure(0, weight=1)
-        self.file_list.bind("<Configure>", self._schedule_list_scrollbar, add="+")
-        self.file_list._parent_canvas.bind(
-            "<Configure>", self._schedule_list_scrollbar, add="+"
-        )
+        tune_scrollable(self.file_list, self.scale)
 
         self.empty_state = EmptyState(
             workspace, self.choose_files, self.choose_folder
@@ -413,6 +411,7 @@ class ConverterApp(ctk.CTk, TkinterDnD.DnDWrapper):
         self.bind_all("<Delete>", lambda _e: self.remove_selected())
         self.bind_all("<F1>", lambda _e: self.show_help())
         self.bind_all("<Escape>", self._escape)
+        self.bind_all("<MouseWheel>", self._queue_scroll_paint, add="+")
 
     def _escape(self, event=None) -> None:
         # A dialog's own Escape binding runs before this global binding. Do not
@@ -579,7 +578,6 @@ class ConverterApp(ctk.CTk, TkinterDnD.DnDWrapper):
         self.side_panel._refresh_output_warning()
         self._update_start_buttons()
         self._update_toolbar_states()
-        self._schedule_list_scrollbar()
 
     def _update_toolbar_states(self) -> None:
         state = "disabled" if self.converting or not self.items else "normal"
@@ -1306,26 +1304,27 @@ class ConverterApp(ctk.CTk, TkinterDnD.DnDWrapper):
     def _set_status(self, text: str, color: str = T.MUTED) -> None:
         self.status_label.configure(text=f"●  {text}", text_color=color)
 
-    def _schedule_list_scrollbar(self, _event=None) -> None:
-        if self._list_sync_job is not None:
-            try:
-                self.after_cancel(self._list_sync_job)
-            except ValueError:
-                pass
-        self._list_sync_job = self.after(80, self._sync_list_scrollbar)
+    def _queue_scroll_paint(self, _event=None) -> None:
+        # CTk's wheel binding runs at the "all" tag. Flush after it so newly
+        # exposed canvas areas are repainted in the same frame instead of
+        # leaving a short visual trail.
+        if self._scroll_paint_job is not None:
+            return
+        self._scroll_paint_job = self.after(8, self._flush_scroll_paint)
 
-    def _sync_list_scrollbar(self) -> None:
-        self._list_sync_job = None
-        try:
-            first, last = self.file_list._parent_canvas.yview()
-            needed = (last - first) < 0.999
-            mapped = bool(self.file_list._scrollbar.winfo_ismapped())
-            if needed and not mapped:
-                self.file_list._scrollbar.grid()
-            elif not needed and mapped:
-                self.file_list._scrollbar.grid_remove()
-        except Exception:
-            LOG.debug("File list scrollbar sync failed", exc_info=True)
+    def _flush_scroll_paint(self) -> None:
+        self._scroll_paint_job = None
+        if self._closing or not self.winfo_exists():
+            return
+        for frame in (self.file_list, getattr(self.side_panel, "body", None)):
+            if frame is None:
+                continue
+            try:
+                canvas = frame._parent_canvas
+                canvas.configure(scrollregion=canvas.bbox("all"))
+                canvas.update_idletasks()
+            except Exception:
+                LOG.debug("Scroll repaint failed", exc_info=True)
 
     def _check_ffmpeg(self) -> None:
         try:

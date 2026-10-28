@@ -1,17 +1,17 @@
-# ncmelt 0.1.1alpha
+# ncmelt 0.1.2alpha
 
-首个公开 alpha 版本。ncmelt 是一个本地运行的网易云 NCM 转换器，提供 Prism 风格的桌面界面、批量队列和同源 CLI。
+ncmelt 0.1.1alpha 的维护更新。ncmelt 是一个本地运行的网易云 NCM 转换器，提供桌面工作区界面、批量队列和同源 CLI。
 
 官网：https://11ly322.github.io/ncmelt/
 
 ## 下载
 
-- `ncmelt-Setup-0.1.1alpha.exe` — Windows 安装器
+- `ncmelt-Setup-0.1.2alpha.exe` — Windows 安装器
   - 可选择安装位置
   - 可选创建桌面快捷方式
   - 可选把 `ncmelt` 加入 PATH
   - 不需要管理员权限
-- `ncmelt-0.1.1alpha-portable-win64.zip` — 便携版，解压即用
+- `ncmelt-0.1.2alpha-portable-win64.zip` — 便携版，解压即用
 - `SHA256SUMS.txt` — 校验值
 
 发布包已内置 FFmpeg 7.1，无需另行安装。系统要求 Windows 10/11 64 位。
@@ -25,10 +25,13 @@
 - 编码后完整解码校验，失败文件单独标记。
 - 原 NCM 不修改；默认同名自动编号，可选覆盖。
 - CLI：`ncmelt input.ncm -o output.mp3`。
-- 安装器与界面图标向 Prism 的扁平几何风格致敬；操作结构参考 Prism 的工作区 / 右侧面板 / 底部状态栏。
+- 界面采用顶部菜单、中央队列、右侧输出面板和底部状态栏，支持整窗拖入文件。
 - 修正 200% 缩放下顶部菜单与设置/帮助对话框的定位和尺寸。
 - 修正隐藏右侧面板后残留空白、对话框内按 Esc 误取消转换、CLI 目录模式 `--overwrite` 无效，以及多输入时把 `-o mix.mp3` 误当目录的问题。
-- 0.1.1alpha 版本号、安装器、GitHub Release 与源码同步发布。
+- 优化队列和右侧面板的滚动重绘：滚动步长按缩放比例对齐，移除滚动条动态隐藏造成的布局跳动和拖影。
+- 程序只保留内置功能，不包含插件或扩展入口。
+- 清理界面、文档和第三方说明中的第三方项目名称。
+- 0.1.2alpha 版本号、安装器、GitHub Release 与源码同步发布。
 
 ## 已知限制
 

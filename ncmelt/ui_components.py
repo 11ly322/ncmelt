@@ -1,4 +1,4 @@
-"""Reusable UI pieces for the Prism-style ncmelt interface."""
+"""Reusable UI pieces for the ncmelt interface."""
 
 from __future__ import annotations
 
@@ -34,6 +34,17 @@ def asset_path(name: str) -> Path | None:
 def truncate(text: str, limit: int) -> str:
     text = (text or "").replace("\n", " ").strip()
     return text if len(text) <= limit else text[: limit - 1] + "…"
+
+
+def tune_scrollable(frame: Any, scale: float) -> None:
+    """Keep canvas scrolling pixel-aligned and avoid fractional repaints."""
+    canvas = getattr(frame, "_parent_canvas", None)
+    if canvas is None:
+        return
+    try:
+        canvas.configure(yscrollincrement=max(1, int(round(scale))))
+    except Exception:
+        pass
 
 
 def shrink_path(path: str, limit: int = 48) -> str:

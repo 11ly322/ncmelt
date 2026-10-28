@@ -1,6 +1,6 @@
 ﻿; ncmelt installer (Inno Setup 6)
 #define AppName "ncmelt"
-#define AppVersion "0.1.1alpha"
+#define AppVersion "0.1.2alpha"
 #define AppPublisher "11ly322"
 #define AppURL "https://github.com/11ly322/ncmelt"
 
@@ -33,11 +33,11 @@ WizardStyle=modern
 ChangesEnvironment=yes
 CloseApplications=yes
 RestartApplications=no
-VersionInfoVersion=0.1.1.0
+VersionInfoVersion=0.1.2.0
 VersionInfoCompany={#AppPublisher}
 VersionInfoDescription=ncmelt - NCM to MP3 converter
 VersionInfoProductName=ncmelt
-VersionInfoProductVersion=0.1.1.0
+VersionInfoProductVersion=0.1.2.0
 MinVersion=10.0
 
 [Languages]

@@ -1,4 +1,4 @@
-"""Create the ncmelt icon in the flat, geometric style of Prism."""
+"""Create the ncmelt application icon."""
 
 from __future__ import annotations
 
@@ -51,8 +51,7 @@ def make_icon(size: int = 1024) -> Image.Image:
     )
 
     # A big geometric down arrow, split into a steel-blue left face and a
-    # vivid blue right face. This echoes Prism's faceted mountain without
-    # copying its artwork.
+    # vivid blue right face.
     split = size * 0.505
     head_y = size * 0.475
     tip_y = size * 0.800

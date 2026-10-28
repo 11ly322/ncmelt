@@ -8,7 +8,7 @@ $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $Root
 $env:PYTHONUTF8 = "1"
 
-$Version = "0.1.1alpha"
+$Version = "0.1.2alpha"
 $AppName = "ncmelt"
 $DistRoot = Join-Path $Root "dist"
 $AppDir = Join-Path $DistRoot $AppName
