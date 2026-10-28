@@ -29,9 +29,9 @@
     <link rel="icon" href="assets/favicon.ico" sizes="any">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/icon-32.png">
     <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-    <link rel="preload" as="image" href="assets/desk-hero-1400.webp"
-          imagesrcset="assets/desk-hero-1000.webp 1000w, assets/desk-hero-1400.webp 1400w, assets/desk-hero-2000.webp 2000w"
-          imagesizes="(max-width: 980px) calc(100vw - 40px), 52vw">
+    <link rel="preload" as="image" href="assets/screenshot-done.webp"
+          imagesrcset="assets/screenshot-done-1280.webp 1280w, assets/screenshot-done.webp 1600w"
+          imagesizes="(max-width: 1120px) min(760px, calc(100vw - 40px)), 50vw">
     <link rel="stylesheet" href="assets/site.css">
     <script>document.documentElement.classList.add('js');</script>
     <script src="assets/site.js" defer></script>
@@ -141,32 +141,29 @@
             </div>
 
             <figure class="hero-visual">
-                <div class="photo-shell">
-                    <picture>
-                        <source type="image/webp"
-                                srcset="assets/desk-hero-1000.webp 1000w, assets/desk-hero-1400.webp 1400w, assets/desk-hero-2000.webp 2000w"
-                                sizes="(max-width: 980px) calc(100vw - 40px), 52vw">
-                        <img src="assets/desk-hero-1400.jpg"
-                             srcset="assets/desk-hero-1000.jpg 1000w, assets/desk-hero-1400.jpg 1400w, assets/desk-hero-2000.jpg 2000w"
-                             sizes="(max-width: 980px) calc(100vw - 40px), 52vw"
-                             width="1400" height="1050" fetchpriority="high"
-                             alt="ncmelt 桌面工作场景：一台笔记本电脑放在木桌上，屏幕上显示 ncmelt 的转换队列和右侧输出面板。">
-                    </picture>
-                    <div class="photo-pill">
-                        <span class="pulse-dot"></span>
-                        本地处理中
-                        <span class="photo-pill-divider"></span>
-                        0 上传
+                <div class="preview-shell">
+                    <div class="preview-bar">
+                        <span class="window-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                        <span class="preview-title">ncmelt 0.1.1alpha</span>
+                        <span class="preview-state"><i></i>本地运行</span>
                     </div>
-                    <div class="photo-badge">
-                        <strong>4</strong>
-                        <span>首已转换<small>MP3 · 320 kbps</small></span>
-                    </div>
+                    <a class="preview-image" href="screenshot-done.png" target="_blank" rel="noopener"
+                       aria-label="打开 ncmelt 转换完成界面原图">
+                        <img src="assets/screenshot-done.webp"
+                             srcset="assets/screenshot-done-1280.webp 1280w, assets/screenshot-done.webp 1600w"
+                             sizes="(max-width: 1120px) min(760px, calc(100vw - 40px)), 50vw"
+                             width="1600" height="1000" fetchpriority="high" decoding="async"
+                             alt="ncmelt 转换完成界面：左侧 4 首歌曲显示完成，右侧为 MP3 320 kbps 输出设置。">
+                        <span class="preview-zoom">
+                            查看原图
+                            <svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M14 4h6v6m0-6-8 8M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg>
+                        </span>
+                    </a>
                 </div>
                 <figcaption>
                     <span class="caption-mark"></span>
-                    桌面场景 · 屏幕内为 ncmelt 实际界面
-                    <a href="#showcase">查看完整界面</a>
+                    实际界面 · 转换完成 / 1600 × 1000
+                    <a href="screenshot-done.png" target="_blank" rel="noopener">打开原图</a>
                 </figcaption>
             </figure>
         </div>
@@ -598,7 +595,7 @@
                 <a href="https://github.com/11ly322/ncmelt/blob/main/LICENSE" target="_blank" rel="noopener">GPL-3.0 许可</a>
                 <a href="https://github.com/11ly322/ncmelt/blob/main/THIRD_PARTY_NOTICES.txt" target="_blank" rel="noopener">第三方组件</a>
                 <a href="https://github.com/11ly322/Prism" target="_blank" rel="noopener">界面致敬 Prism</a>
-                <a href="https://unsplash.com/license" target="_blank" rel="noopener">桌面照片来源</a>
+                <a href="https://github.com/11ly322/ncmelt/blob/main/docs/screenshot-ready.png" target="_blank" rel="noopener">界面截图</a>
             </div>
         </div>
 
