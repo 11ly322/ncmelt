@@ -1,0 +1,47 @@
+"""Visual tokens inspired by Prism's flat dark UI."""
+
+from __future__ import annotations
+
+BG = "#101113"
+TOOLBAR = "#17191D"
+PANEL = "#1A1C20"
+PANEL_ALT = "#202329"
+PANEL_DEEP = "#141619"
+BORDER = "#2A2E35"
+BORDER_SOFT = "#22262C"
+ROW = "#141619"
+ROW_ALT = "#17191D"
+ROW_HOVER = "#20242B"
+ROW_SELECTED = "#18263D"
+TEXT = "#F2F4F8"
+TEXT_SOFT = "#C9D0DA"
+MUTED = "#939CAA"
+SUBTLE = "#646E7D"
+ACCENT = "#3D7DFF"
+ACCENT_HOVER = "#5A93FF"
+ACCENT_PRESSED = "#2C67E0"
+ACCENT_SOFT = "#17243D"
+BLUE_DIM = "#2C4D8A"
+SUCCESS = "#3DDC84"
+SUCCESS_SOFT = "#153326"
+WARNING = "#FFB454"
+WARNING_SOFT = "#322612"
+ERROR = "#FF7070"
+ERROR_SOFT = "#33191B"
+ORANGE = "#FFA64D"
+STEEL = "#7487A8"
+
+FONT_FAMILY = "Microsoft YaHei UI"
+FONT_MONO = "Cascadia Mono"
+
+FORMAT_COLORS = {
+    "FLAC": ("#263247", "#A9C6FF"),
+    "MP3": ("#1B2A44", "#7FB0FF"),
+    "AAC": ("#173330", "#77E0C8"),
+    "M4A": ("#173330", "#77E0C8"),
+    "OGG": ("#2E2A1A", "#E8C979"),
+    "WAV": ("#2A2D34", "#C6CDD8"),
+    "APE": ("#2E2A1A", "#E8C979"),
+    "WMA": ("#263247", "#A9C6FF"),
+    "NCM": ("#1B2A44", "#7FB0FF"),
+}

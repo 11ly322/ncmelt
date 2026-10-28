@@ -1,0 +1,71 @@
+# Third-party notices — ncmelt 0.1.1alpha
+
+ncmelt is distributed under the GNU General Public License v3.0 (see
+LICENSE). It bundles or depends on the following components.
+
+## FFmpeg 7.1 (bundled as ffmpeg.exe in the installer/portable package)
+
+- Project: https://ffmpeg.org/
+- License: GNU General Public License v3.0. The bundled build is
+  `ffmpeg-7.1-essentials_build-www.gyan.dev`, GPL-enabled, including
+  libmp3lame, FLAC, AAC, Vorbis and PCM encoders.
+- Corresponding source: https://ffmpeg.org/releases/ffmpeg-7.1.tar.xz
+- Build information: https://www.gyan.dev/ffmpeg/builds/
+- The executable is included unmodified and invoked as a separate process
+  for audio decoding/encoding. A copy of the GPLv3 is provided in
+  `licenses/GPL-3.0.txt`.
+
+## Mutagen 1.47.0
+
+- Project: https://mutagen.readthedocs.io/
+- License: GNU General Public License v2.0 or later.
+- Used for reading audio information and writing MP3/FLAC/M4A/OGG/WAV tags
+  and cover art.
+
+## CustomTkinter 5.2.2
+
+- Project: https://github.com/TomSchimansky/CustomTkinter
+- License: Creative Commons Zero v1.0 Universal (CC0-1.0).
+
+## tkinterdnd2 0.4.3 / TkDND 2.9.4
+
+- Project: https://github.com/Eliav2/tkinterdnd2 and
+  https://github.com/petasis/tkdnd
+- tkinterdnd2: MIT License. TkDND is distributed under its own permissive
+  license; see the upstream project for details.
+- Used for dragging files and folders into the window.
+
+## PyCryptodome 3.23.0
+
+- Project: https://www.pycryptodome.org/
+- License: BSD 2-Clause, with portions in the public domain.
+- Used for AES decryption of NCM headers and the XOR primitive.
+
+## Pillow 12.3.0
+
+- Project: https://python-pillow.org/
+- License: HPND / MIT-CMU style permissive license.
+- Used for icon and image loading.
+
+## PyInstaller 6.22.3 (build-time only)
+
+- Project: https://pyinstaller.org/
+- License: GPLv2-or-later with a special exception that permits packaging
+  proprietary applications. It is not included in the application runtime.
+
+## Inno Setup 6.7.3 (build-time only)
+
+- Project: https://jrsoftware.org/isinfo.php
+- Used only to build the Windows installer. It is not included in the
+  installed application.
+
+## Python 3.12 (runtime embedded by PyInstaller)
+
+- Project: https://www.python.org/
+- License: Python Software Foundation License.
+
+## Interface inspiration
+
+The workspace/panel layout and flat dark visual language are inspired by
+Prism (MIT, https://github.com/11ly322/Prism). No Prism source code is
+included in ncmelt.

@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ncmelt"
+version = "0.1.1a0"
+description = "NCM to MP3 converter with a batch GUI and CLI"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "GPL-3.0-or-later" }
+authors = [{ name = "11ly322" }]
+keywords = ["ncm", "netease", "mp3", "flac", "converter"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Win32 (MS Windows)",
+  "Intended Audience :: End Users/Desktop",
+  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+  "Operating System :: Microsoft :: Windows",
+  "Programming Language :: Python :: 3",
+  "Topic :: Multimedia :: Sound/Audio :: Conversion",
+]
+dependencies = [
+  "customtkinter==5.2.2",
+  "tkinterdnd2==0.4.3",
+  "mutagen==1.47.0",
+  "pycryptodome==3.23.0",
+  "Pillow>=10.4",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pyinstaller==6.22.3",
+  "numpy>=2.0",
+  "ruff==0.14.4",
+]
+
+[project.scripts]
+ncmelt = "ncmelt.cli:main"
+
+[project.gui-scripts]
+ncmelt-gui = "ncmelt.gui:run"
+
+[project.urls]
+Homepage = "https://11ly322.github.io/ncmelt/"
+Repository = "https://github.com/11ly322/ncmelt"
+Issues = "https://github.com/11ly322/ncmelt/issues"
+Changelog = "https://github.com/11ly322/ncmelt/releases"
+
+[tool.setuptools.packages.find]
+include = ["ncmelt*"]
+
+[tool.setuptools.package-data]
+ncmelt = ["assets/*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+ignore = ["E501"]

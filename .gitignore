@@ -1,0 +1,22 @@
+# build artifacts
+build/
+dist/
+release/
+*.spec
+
+# bundled FFmpeg is fetched for local builds, not committed
+assets/ffmpeg.exe
+
+# local development
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+artifacts/
+tests/generated/
+tests/out/
+*.log
+.env
+.DS_Store

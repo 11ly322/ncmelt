@@ -1,0 +1,37 @@
+ncmelt 0.1.1alpha — NCM to MP3 converter
+==========================================
+
+安装
+----
+双击 ncmelt-Setup-0.1.1alpha.exe：
+• 可选择安装位置（默认 %LOCALAPPDATA%\Programs\ncmelt）
+• 可选创建桌面快捷方式
+• 可选将 ncmelt 加入 PATH，之后在终端使用 ncmelt 命令
+
+使用
+----
+1. 启动 ncmelt-gui.exe，或从开始菜单/桌面打开。
+2. 把 .ncm 文件拖到窗口任意位置，或 文件 → 添加文件（Ctrl+O）。
+3. 在右侧选择输出格式（MP3 / FLAC / WAV / M4A / OGG）和音质。
+4. 点击“开始转换”，完成后可点击“打开目录”。
+
+命令行
+------
+ncmelt input.ncm -o output.mp3
+ncmelt input.ncm -o output.flac --quality max
+ncmelt a.ncm b.ncm -o D:\Music --format flac
+ncmelt --help
+
+说明
+----
+• 支持 NCM 内嵌的 MP3、FLAC、AAC、M4A 源，所有常见音质档位。
+• 自动写入歌曲名、歌手、专辑和封面；可在侧栏关闭。
+• 每个输出都会做完整解码校验。
+• 原 .ncm 文件不会被修改或删除；默认同名自动编号。
+• 全部处理在本机完成，不上传网络，不需要登录。
+
+日志：%LOCALAPPDATA%\ncmelt\logs\app.log
+项目：https://github.com/11ly322/ncmelt
+许可：GPL-3.0；内置 FFmpeg 为 GPL 构建，详见 THIRD_PARTY_NOTICES.txt。
+
+请仅转换你自己合法拥有、供个人使用的音乐文件，不要传播转换后的版权内容。
