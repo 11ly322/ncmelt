@@ -1,6 +1,6 @@
 ﻿; ncmelt installer (Inno Setup 6)
 #define AppName "ncmelt"
-#define AppVersion "0.1.2alpha"
+#define AppVersion "0.1.2beta"
 #define AppPublisher "11ly322"
 #define AppURL "https://github.com/11ly322/ncmelt"
 

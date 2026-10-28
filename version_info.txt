@@ -22,7 +22,7 @@ VSVersionInfo(
             StringStruct("LegalCopyright", "GPL-3.0-or-later"),
             StringStruct("OriginalFilename", "ncmelt-gui.exe"),
             StringStruct("ProductName", "ncmelt"),
-            StringStruct("ProductVersion", "0.1.2alpha")
+            StringStruct("ProductVersion", "0.1.2beta")
           ]
         )
       ]
