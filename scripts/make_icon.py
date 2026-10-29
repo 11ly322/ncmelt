@@ -7,7 +7,6 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parent.parent
-ASSETS = ROOT / "assets"
 PACKAGE_ASSETS = ROOT / "ncmelt" / "assets"
 
 BG = "#1E232B"
@@ -91,22 +90,20 @@ def make_icon(size: int = 1024) -> Image.Image:
 
 
 def main() -> None:
-    for directory in (ASSETS, PACKAGE_ASSETS):
-        directory.mkdir(parents=True, exist_ok=True)
+    PACKAGE_ASSETS.mkdir(parents=True, exist_ok=True)
     icon = make_icon(1024)
-    for directory in (ASSETS, PACKAGE_ASSETS):
-        icon.save(directory / "app.png")
-        icon.resize((256, 256), Image.Resampling.LANCZOS).save(
-            directory / "app-256.png"
-        )
-        icon.resize((128, 128), Image.Resampling.LANCZOS).save(
-            directory / "app-128.png"
-        )
-        icon.resize((64, 64), Image.Resampling.LANCZOS).save(directory / "app-64.png")
-        icon.save(
-            directory / "app.ico",
-            format="ICO",
-            sizes=[
+    icon.save(PACKAGE_ASSETS / "app.png")
+    icon.resize((256, 256), Image.Resampling.LANCZOS).save(
+        PACKAGE_ASSETS / "app-256.png"
+    )
+    icon.resize((128, 128), Image.Resampling.LANCZOS).save(
+        PACKAGE_ASSETS / "app-128.png"
+    )
+    icon.resize((64, 64), Image.Resampling.LANCZOS).save(PACKAGE_ASSETS / "app-64.png")
+    icon.save(
+        PACKAGE_ASSETS / "app.ico",
+        format="ICO",
+        sizes=[
                 (16, 16),
                 (24, 24),
                 (32, 32),

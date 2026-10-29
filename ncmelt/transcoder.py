@@ -120,9 +120,15 @@ _ffmpeg_cache: Path | None = None
 _ffmpeg_version_cache: str | None = None
 
 
+def _ffmpeg_version_from_output(output: str) -> str:
+    first_line = output.splitlines()[0] if output else "FFmpeg"
+    match = re.search(r"ffmpeg version\s+n?(\d+(?:\.\d+)*)", first_line)
+    return f"FFmpeg {match.group(1)}" if match else "FFmpeg 已就绪"
+
+
 def find_ffmpeg() -> Path:
     """Locate a usable FFmpeg executable next to the app or on PATH."""
-    global _ffmpeg_cache
+    global _ffmpeg_cache, _ffmpeg_version_cache
     if _ffmpeg_cache is not None and _ffmpeg_cache.exists():
         return _ffmpeg_cache
     for candidate in _ffmpeg_candidates():
@@ -142,6 +148,9 @@ def find_ffmpeg() -> Path:
             continue
         if completed.returncode == 0:
             _ffmpeg_cache = candidate
+            # Reuse this probe for the status bar; a second subprocess was
+            # adding noticeable startup latency on Windows.
+            _ffmpeg_version_cache = _ffmpeg_version_from_output(completed.stdout or "")
             return candidate
     raise FFmpegNotFoundError(
         "找不到可用的 FFmpeg。请确认程序目录中的 ffmpeg.exe 未被删除。"
@@ -154,6 +163,8 @@ def ffmpeg_version() -> str:
         return _ffmpeg_version_cache
     try:
         ffmpeg = find_ffmpeg()
+        if _ffmpeg_version_cache:
+            return _ffmpeg_version_cache
         result = subprocess.run(
             [str(ffmpeg), "-hide_banner", "-version"],
             capture_output=True,
@@ -163,11 +174,7 @@ def ffmpeg_version() -> str:
             timeout=15,
             creationflags=CREATE_NO_WINDOW,
         )
-        first_line = (result.stdout or "").splitlines()[0] if result.stdout else "FFmpeg"
-        match = re.search(r"ffmpeg version\s+n?(\d+(?:\.\d+)*)", first_line)
-        _ffmpeg_version_cache = (
-            f"FFmpeg {match.group(1)}" if match else "FFmpeg 已就绪"
-        )
+        _ffmpeg_version_cache = _ffmpeg_version_from_output(result.stdout or "")
     except (FFmpegNotFoundError, OSError, subprocess.SubprocessError):
         _ffmpeg_version_cache = "FFmpeg 未就绪"
     return _ffmpeg_version_cache

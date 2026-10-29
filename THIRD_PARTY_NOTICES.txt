@@ -1,4 +1,4 @@
-# Third-party notices — ncmelt 0.1.2beta
+# Third-party notices — ncmelt 0.1.3alpha
 
 ncmelt is distributed under the GNU General Public License v3.0 (see
 LICENSE). It bundles or depends on the following components.

@@ -1,9 +1,9 @@
-ncmelt 0.1.2beta — NCM to MP3 converter
+ncmelt 0.1.3alpha — NCM to MP3 converter
 ==========================================
 
 安装
 ----
-双击 ncmelt-Setup-0.1.2beta.exe：
+双击 ncmelt-Setup-0.1.3alpha.exe：
 • 可选择安装位置（默认 %LOCALAPPDATA%\Programs\ncmelt）
 • 可选创建桌面快捷方式
 • 可选将 ncmelt 加入 PATH，之后在终端使用 ncmelt 命令

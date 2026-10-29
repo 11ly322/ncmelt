@@ -47,6 +47,148 @@ def tune_scrollable(frame: Any, scale: float) -> None:
         pass
 
 
+class FastScrollbar(tk.Canvas):
+    """Lightweight flat scrollbar for a CTkScrollableFrame."""
+
+    def __init__(
+        self,
+        master,
+        command,
+        *,
+        width: int,
+        trough: str,
+        thumb: str,
+        hover: str,
+    ):
+        super().__init__(
+            master,
+            width=width,
+            bg=trough,
+            bd=0,
+            highlightthickness=0,
+            cursor="arrow",
+        )
+        self._command = command
+        self._trough = trough
+        self._thumb = thumb
+        self._hover = hover
+        self._first = 0.0
+        self._last = 1.0
+        self._drag_offset = 0
+        self._active = False
+        self.bind("<Configure>", self._draw, add="+")
+        self.bind("<Button-1>", self._on_press, add="+")
+        self.bind("<B1-Motion>", self._on_drag, add="+")
+        self.bind("<ButtonRelease-1>", self._on_release, add="+")
+        self.bind("<Enter>", lambda _e: self._set_active(True), add="+")
+        self.bind("<Leave>", lambda _e: self._set_active(False), add="+")
+        self.bind("<MouseWheel>", self._on_wheel, add="+")
+
+    def set(self, first, last) -> None:
+        try:
+            self._first = max(0.0, min(1.0, float(first)))
+            self._last = max(0.0, min(1.0, float(last)))
+        except (TypeError, ValueError):
+            self._first, self._last = 0.0, 1.0
+        self._draw()
+
+    def _bounds(self) -> tuple[int, int]:
+        height = max(1, self.winfo_height())
+        pad = 2
+        span = max(0, height - pad * 2)
+        start = pad + self._first * span
+        end = pad + self._last * span
+        minimum = max(18, height // 12)
+        if end - start < minimum:
+            end = min(height - pad, start + minimum)
+            start = max(pad, end - minimum)
+        return int(start), int(max(start + 1, end))
+
+    def _draw(self, _event=None) -> None:
+        self.delete("all")
+        width = max(1, self.winfo_width())
+        height = max(1, self.winfo_height())
+        self.create_rectangle(0, 0, width, height, fill=self._trough, outline="")
+        if self._last - self._first >= 0.999:
+            return
+        start, end = self._bounds()
+        self.create_rectangle(
+            3,
+            start,
+            max(4, width - 3),
+            end,
+            fill=self._hover if self._active else self._thumb,
+            outline="",
+        )
+
+    def _set_active(self, active: bool) -> None:
+        self._active = active
+        self._draw()
+
+    def _scroll_to(self, y: float) -> None:
+        height = max(1, self.winfo_height())
+        span = max(0.0, self._last - self._first)
+        fraction = max(0.0, min(1.0, (y - self._drag_offset) / height))
+        value = max(0.0, min(1.0 - span, fraction - span / 2))
+        self._command("moveto", value)
+
+    def _on_press(self, event) -> None:
+        start, end = self._bounds()
+        if start <= event.y <= end:
+            self._drag_offset = event.y - (start + end) // 2
+        else:
+            self._drag_offset = 0
+        self._scroll_to(event.y)
+
+    def _on_drag(self, event) -> None:
+        self._scroll_to(event.y)
+
+    def _on_release(self, _event) -> None:
+        self._drag_offset = 0
+
+    def _on_wheel(self, event) -> None:
+        direction = -1 if event.delta > 0 else 1
+        self._command("scroll", direction * 3, "units")
+
+
+def install_fast_scrollbar(
+    frame: Any,
+    scale: float,
+    *,
+    trough: str,
+    thumb: str,
+    hover: str,
+) -> None:
+    """Replace CTk's shape-heavy scrollbar with a flat canvas bar."""
+    canvas = getattr(frame, "_parent_canvas", None)
+    old = getattr(frame, "_scrollbar", None)
+    if canvas is None or old is None:
+        return
+    try:
+        parent = old.master
+        info = old.grid_info()
+        old.destroy()
+        bar = FastScrollbar(
+            parent,
+            canvas.yview,
+            width=max(8, int(round(9 * scale))),
+            trough=trough,
+            thumb=thumb,
+            hover=hover,
+        )
+        bar.grid(
+            row=int(info.get("row", 1)),
+            column=int(info.get("column", 1)),
+            sticky="ns",
+            padx=0,
+            pady=0,
+        )
+        canvas.configure(yscrollcommand=bar.set)
+        frame._scrollbar = bar
+    except Exception:
+        pass
+
+
 def shrink_path(path: str, limit: int = 48) -> str:
     if len(path) <= limit:
         return path
@@ -476,3 +618,100 @@ class EmptyState(ctk.CTkFrame):
             font=ctk.CTkFont(family=T.FONT_FAMILY, size=9),
             text_color=T.SUBTLE,
         ).pack(pady=(14, 0))
+
+
+class MenuPopup(ctk.CTkToplevel):
+    """Small dark popup menu used by the toolbar."""
+
+    @staticmethod
+    def px(value: int, scale: float) -> int:
+        return int(round(value * scale))
+
+    def __init__(self, master, anchor, items, on_close=None):
+        super().__init__(master)
+        self._on_close = on_close
+        self.withdraw()
+        self.overrideredirect(True)
+        self.configure(fg_color=T.BORDER)
+        self.attributes("-topmost", True)
+        self._items = items
+
+        frame = ctk.CTkFrame(
+            self,
+            fg_color=T.PANEL,
+            corner_radius=2,
+            border_width=1,
+            border_color=T.BORDER,
+        )
+        frame.pack(fill="both", expand=True, padx=1, pady=1)
+        self.frame = frame
+        for item in items:
+            if item is None:
+                ctk.CTkFrame(frame, height=1, fg_color=T.BORDER).pack(
+                    fill="x", padx=8, pady=3
+                )
+                continue
+            label, command = item
+            btn = ctk.CTkButton(
+                frame,
+                text=label,
+                anchor="w",
+                height=28,
+                corner_radius=0,
+                fg_color="transparent",
+                hover_color=T.ROW_HOVER,
+                text_color=T.TEXT_SOFT,
+                font=ctk.CTkFont(family=T.FONT_FAMILY, size=10),
+                command=lambda c=command: self._choose(c),
+            )
+            btn.pack(fill="x", padx=2)
+
+        self.update_idletasks()
+        scale = max(1.0, master._get_window_scaling())
+        # CTk multiplies geometry width/height by the window scale, while the
+        # +x+y offsets are passed through as physical screen coordinates.
+        width = max(214, round(frame.winfo_reqwidth() / scale))
+        height = max(1, round(frame.winfo_reqheight() / scale)) + 2
+        width_px, height_px = self.px(width, scale), self.px(height, scale)
+        x = anchor.winfo_rootx()
+        y = anchor.winfo_rooty() + anchor.winfo_height() + self.px(1, scale)
+        if x + width_px > self.winfo_screenwidth():
+            x = max(0, self.winfo_screenwidth() - width_px - self.px(8, scale))
+        if y + height_px > self.winfo_screenheight():
+            y = max(0, anchor.winfo_rooty() - height_px - self.px(2, scale))
+        self.geometry(f"{width}x{height}+{int(x)}+{int(y)}")
+        self.deiconify()
+        self.lift()
+        self.update_idletasks()
+        self.focus_force()
+        try:
+            self.grab_set()
+        except Exception:
+            pass
+        self.bind("<Escape>", lambda _e: self.close())
+        self.bind("<Button-1>", self._on_click, add="+")
+
+    def _on_click(self, event) -> None:
+        if event.x_root < self.winfo_rootx() or event.x_root > (
+            self.winfo_rootx() + self.winfo_width()
+        ):
+            self.close()
+            return
+        if event.y_root < self.winfo_rooty() or event.y_root > (
+            self.winfo_rooty() + self.winfo_height()
+        ):
+            self.close()
+
+    def _choose(self, command) -> None:
+        self.close()
+        command()
+
+    def close(self) -> None:
+        if self.winfo_exists():
+            try:
+                self.grab_release()
+            except Exception:
+                pass
+            if self._on_close is not None:
+                self._on_close()
+            self.destroy()

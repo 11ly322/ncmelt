@@ -1,6 +1,6 @@
 ﻿; ncmelt installer (Inno Setup 6)
 #define AppName "ncmelt"
-#define AppVersion "0.1.2beta"
+#define AppVersion "0.1.3alpha"
 #define AppPublisher "11ly322"
 #define AppURL "https://github.com/11ly322/ncmelt"
 
@@ -24,7 +24,7 @@ ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 OutputDir=release
 OutputBaseFilename=ncmelt-Setup-{#AppVersion}
-SetupIconFile=assets\app.ico
+SetupIconFile=ncmelt\assets\app.ico
 UninstallDisplayIcon={app}\ncmelt-gui.exe
 UninstallDisplayName=ncmelt
 Compression=lzma2/ultra64
@@ -33,11 +33,11 @@ WizardStyle=modern
 ChangesEnvironment=yes
 CloseApplications=yes
 RestartApplications=no
-VersionInfoVersion=0.1.2.0
+VersionInfoVersion=0.1.3.0
 VersionInfoCompany={#AppPublisher}
 VersionInfoDescription=ncmelt - NCM to MP3 converter
 VersionInfoProductName=ncmelt
-VersionInfoProductVersion=0.1.2.0
+VersionInfoProductVersion=0.1.3.0
 MinVersion=10.0
 
 [Languages]

@@ -9,6 +9,7 @@ import queue
 import threading
 import time
 import webbrowser
+from collections import deque
 from pathlib import Path
 from tkinter import filedialog, messagebox
 
@@ -25,16 +26,26 @@ from .settings import load_settings, log_path, save_settings
 from .transcoder import ffmpeg_version, find_ffmpeg, open_in_explorer
 from .ui_components import (
     EmptyState,
+    MenuPopup,
     QueueItem,
     QueueRow,
     asset_path,
     duration_text,
     human_size,
+    install_fast_scrollbar,
     truncate,
     tune_scrollable,
 )
-from .ui_menu import MenuPopup
 from .ui_side import HelpDialog, SettingsDialog, SidePanel
+
+try:
+    # Polygon drawing is significantly faster than the font-shape fallback
+    # during the first layout pass at high Windows display scaling.
+    from customtkinter.windows.widgets.core_rendering.draw_engine import DrawEngine
+
+    DrawEngine.preferred_drawing_method = "polygon_shapes"
+except Exception:
+    pass
 
 LOG = logging.getLogger(__name__)
 
@@ -88,6 +99,9 @@ class ConverterApp(ctk.CTk, TkinterDnD.DnDWrapper):
         self._closing = False
         self._close_deadline = 0.0
         self._dnd_registered: set[str] = set()
+        self._dnd_queued: set[str] = set()
+        self._dnd_pending: deque = deque()
+        self._dnd_job: str | None = None
         self._drag_hide_job: str | None = None
         self._last_drop = (0.0, "")
         self._scroll_paint_job: str | None = None
@@ -277,6 +291,13 @@ class ConverterApp(ctk.CTk, TkinterDnD.DnDWrapper):
         )
         self.file_list.grid(row=1, column=0, sticky="nsew")
         self.file_list.grid_columnconfigure(0, weight=1)
+        install_fast_scrollbar(
+            self.file_list,
+            self.scale,
+            trough=T.BG,
+            thumb=T.SUBTLE,
+            hover=T.MUTED,
+        )
         tune_scrollable(self.file_list, self.scale)
 
         self.empty_state = EmptyState(
@@ -887,28 +908,48 @@ class ConverterApp(ctk.CTk, TkinterDnD.DnDWrapper):
     # Drag and drop
     # ------------------------------------------------------------------
     def _register_drop_tree(self, widget=None) -> None:
-        if widget is None:
-            widget = self
+        self._queue_drop_widgets(widget if widget is not None else self)
+        if self._dnd_job is None and self._dnd_pending:
+            self._dnd_job = self.after(20, self._register_drop_chunk)
+
+    def _queue_drop_widgets(self, widget) -> None:
         try:
             key = str(widget)
         except Exception:
             return
-        if key in self._dnd_registered:
-            return
-        self._dnd_registered.add(key)
-        try:
-            widget.drop_target_register(DND_FILES)
-            widget.dnd_bind("<<DropEnter>>", self._on_drag_enter)
-            widget.dnd_bind("<<DropLeave>>", self._on_drag_leave)
-            widget.dnd_bind("<<Drop>>", self._on_drop)
-        except Exception:
-            pass
+        if key not in self._dnd_registered and key not in self._dnd_queued:
+            self._dnd_pending.append(widget)
+            self._dnd_queued.add(key)
         try:
             children = widget.winfo_children()
         except Exception:
             children = []
         for child in children:
-            self._register_drop_tree(child)
+            self._queue_drop_widgets(child)
+
+    def _register_drop_chunk(self) -> None:
+        self._dnd_job = None
+        for _ in range(24):
+            if not self._dnd_pending:
+                return
+            widget = self._dnd_pending.popleft()
+            try:
+                key = str(widget)
+            except Exception:
+                continue
+            self._dnd_queued.discard(key)
+            if key in self._dnd_registered:
+                continue
+            self._dnd_registered.add(key)
+            try:
+                widget.drop_target_register(DND_FILES)
+                widget.dnd_bind("<<DropEnter>>", self._on_drag_enter)
+                widget.dnd_bind("<<DropLeave>>", self._on_drag_leave)
+                widget.dnd_bind("<<Drop>>", self._on_drop)
+            except Exception:
+                pass
+        if self._dnd_pending:
+            self._dnd_job = self.after(20, self._register_drop_chunk)
 
     def _on_drag_enter(self, _event):
         if self._drag_hide_job is not None:
@@ -1143,6 +1184,12 @@ class ConverterApp(ctk.CTk, TkinterDnD.DnDWrapper):
 
     def _handle_event(self, event: dict) -> None:
         kind = event.get("type")
+        if kind == "ffmpeg_ready":
+            self._set_status(f"就绪  ·  {event.get('version', 'FFmpeg')}", T.MUTED)
+            return
+        if kind == "ffmpeg_missing":
+            self._set_status("FFmpeg 未找到，无法转换", T.ERROR)
+            return
         item = self._find_item(event.get("path"))
         if kind == "file_start" and item:
             item.status = "decrypt"
@@ -1327,11 +1374,25 @@ class ConverterApp(ctk.CTk, TkinterDnD.DnDWrapper):
                 LOG.debug("Scroll repaint failed", exc_info=True)
 
     def _check_ffmpeg(self) -> None:
-        try:
-            find_ffmpeg()
-            self._set_status(f"就绪  ·  {ffmpeg_version()}", T.MUTED)
-        except FFmpegNotFoundError:
-            self._set_status("FFmpeg 未找到，无法转换", T.ERROR)
+        # Probing ffmpeg.exe can take seconds on first launch (antivirus,
+        # network drives). Keep it off the UI thread so the window paints and
+        # stays responsive immediately.
+        self._set_status("正在检查 FFmpeg…", T.MUTED)
+
+        def work() -> None:
+            try:
+                find_ffmpeg()
+                version = ffmpeg_version()
+                self.events.put({"type": "ffmpeg_ready", "version": version})
+            except FFmpegNotFoundError:
+                self.events.put({"type": "ffmpeg_missing"})
+            except Exception:
+                LOG.exception("FFmpeg startup check failed")
+                self.events.put({"type": "ffmpeg_missing"})
+
+        threading.Thread(
+            target=work, name="ncmelt-ffmpeg-check", daemon=True
+        ).start()
 
     def _save_settings(self) -> None:
         self.settings.update(

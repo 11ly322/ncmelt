@@ -8,7 +8,7 @@ $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $Root
 $env:PYTHONUTF8 = "1"
 
-$Version = "0.1.2beta"
+$Version = "0.1.3alpha"
 $AppName = "ncmelt"
 $DistRoot = Join-Path $Root "dist"
 $AppDir = Join-Path $DistRoot $AppName
@@ -55,13 +55,13 @@ $guiArgs = @(
     "--onedir",
     "--windowed",
     "--name", "ncmelt-gui",
-    "--icon", (Join-Path $Root "assets\app.ico"),
+    "--icon", (Join-Path $Root "ncmelt\assets\app.ico"),
     "--version-file", (Join-Path $Root "version_info.txt"),
     "--manifest", (Join-Path $Root "ncmelt.manifest"),
-    "--add-data", ((Join-Path $Root "assets\app.ico") + ";assets"),
-    "--add-data", ((Join-Path $Root "assets\app-64.png") + ";assets"),
-    "--add-data", ((Join-Path $Root "assets\app-128.png") + ";assets"),
-    "--add-data", ((Join-Path $Root "assets\app-256.png") + ";assets"),
+    "--add-data", ((Join-Path $Root "ncmelt\assets\app.ico") + ";assets"),
+    "--add-data", ((Join-Path $Root "ncmelt\assets\app-64.png") + ";assets"),
+    "--add-data", ((Join-Path $Root "ncmelt\assets\app-128.png") + ";assets"),
+    "--add-data", ((Join-Path $Root "ncmelt\assets\app-256.png") + ";assets"),
     "--collect-all", "customtkinter",
     "--collect-all", "tkinterdnd2",
     "--hidden-import", "PIL._tkinter_finder",
@@ -80,7 +80,7 @@ $cliArgs = @(
     "--onefile",
     "--console",
     "--name", "ncmelt",
-    "--icon", (Join-Path $Root "assets\app.ico"),
+    "--icon", (Join-Path $Root "ncmelt\assets\app.ico"),
     "--version-file", (Join-Path $Root "version_info.txt"),
     "--manifest", (Join-Path $Root "ncmelt.manifest"),
     "--exclude-module", "customtkinter",
@@ -123,11 +123,6 @@ foreach ($name in @(
 }
 foreach ($name in @("ncmelt", "scripts", "tests", "docs", "installer")) {
     Copy-Item $name $sourceDir -Recurse -Force
-}
-$sourceAssets = Join-Path $sourceDir "assets"
-New-Item -ItemType Directory -Force -Path $sourceAssets | Out-Null
-foreach ($icon in @("app.ico", "app.png", "app-64.png", "app-128.png", "app-256.png")) {
-    Copy-Item (Join-Path $Root "assets\$icon") $sourceAssets -Force
 }
 Get-ChildItem $sourceDir -Recurse -Directory -Filter "__pycache__" | Remove-Item -Recurse -Force
 Get-ChildItem $sourceDir -Recurse -File -Filter "*.pyc" | Remove-Item -Force

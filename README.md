@@ -8,7 +8,7 @@
 
 <sub>网易云 NCM 批量解密 · 多格式输出 · 全程本地</sub>
 
-![version](https://img.shields.io/badge/version-0.1.2beta-3d7dff?style=flat-square)
+![version](https://img.shields.io/badge/version-0.1.3alpha-3d7dff?style=flat-square)
 ![platform](https://img.shields.io/badge/platform-Windows%2010%2F11-2b2f36?style=flat-square)
 ![python](https://img.shields.io/badge/python-3.10%2B-3776ab?style=flat-square&logo=python&logoColor=white)
 ![license](https://img.shields.io/badge/license-GPL--3.0-3ddc84?style=flat-square)
@@ -46,8 +46,8 @@ ncmelt 是一个完全在本机运行的 Windows 转换器。它读取网易云�
 
 | 文件 | 说明 |
 | --- | --- |
-| `ncmelt-Setup-0.1.2beta.exe` | Windows 安装器：可选安装位置、桌面快捷方式、PATH |
-| `ncmelt-0.1.2beta-portable-win64.zip` | 便携版：解压后运行 `ncmelt-gui.exe` |
+| `ncmelt-Setup-0.1.3alpha.exe` | Windows 安装器：可选安装位置、桌面快捷方式、PATH |
+| `ncmelt-0.1.3alpha-portable-win64.zip` | 便携版：解压后运行 `ncmelt-gui.exe` |
 | `SHA256SUMS.txt` | 发布文件的 SHA-256 校验值 |
 
 系统要求：Windows 10/11 64 位。发布包已内置 FFmpeg 7.1，不需要另行安装。
@@ -124,8 +124,8 @@ powershell -ExecutionPolicy Bypass -File build.ps1
 构建产出：
 
 - `dist\ncmelt\`：GUI + CLI + FFmpeg 的便携目录
-- `release\ncmelt-0.1.2beta-portable-win64.zip`
-- `release\ncmelt-Setup-0.1.2beta.exe`
+- `release\ncmelt-0.1.3alpha-portable-win64.zip`
+- `release\ncmelt-Setup-0.1.3alpha.exe`
 - `release\SHA256SUMS.txt`
 
 安装器脚本在 `installer.iss`，安装位置、桌面快捷方式和 PATH 任务都在其中配置。
@@ -148,7 +148,7 @@ ncmelt/                 应用包
   transcoder.py         FFmpeg 编码、标签与完整性校验
   formats.py            输出格式与音质定义
   gui.py                主窗口与工作区布局
-  ui_components.py      队列、摘要、滚动辅助
+  ui_components.py      队列、摘要、菜单与滚动辅助
   ui_side.py            右侧面板、设置与帮助
 app.py                  GUI 入口
 cli_main.py             CLI 打包入口
@@ -164,4 +164,4 @@ tests/                  单元与集成测试
 - 内置 FFmpeg 为 GPL 构建；第三方组件许可见 [THIRD_PARTY_NOTICES.txt](THIRD_PARTY_NOTICES.txt)。
 - 本项目是非官方工具，与网易云音乐及其关联公司无任何关系。
 - 仅用于转换你自己合法拥有、供个人使用的音乐文件；请勿传播转换后的受版权保护内容。
-- 0.1.2beta 仍属测试版本，界面和参数可能继续调整；欢迎在 [Issues](https://github.com/11ly322/ncmelt/issues) 反馈问题。
+- 0.1.3alpha 仍属测试版本，界面和参数可能继续调整；欢迎在 [Issues](https://github.com/11ly322/ncmelt/issues) 反馈问题。

@@ -10,7 +10,13 @@ import customtkinter as ctk
 from . import APP_SUBTITLE, __version__ as APP_VERSION
 from . import theme as T
 from .formats import OUTPUT_FORMATS, format_by_id
-from .ui_components import SummaryBars, human_size, shrink_path, tune_scrollable
+from .ui_components import (
+    SummaryBars,
+    human_size,
+    install_fast_scrollbar,
+    shrink_path,
+    tune_scrollable,
+)
 
 LOG = logging.getLogger(__name__)
 
@@ -145,6 +151,13 @@ class SidePanel(ctk.CTkFrame):
         )
         self.body.grid(row=3, column=0, sticky="nsew")
         self.body.grid_columnconfigure(0, weight=1)
+        install_fast_scrollbar(
+            self.body,
+            self.app.scale,
+            trough=T.PANEL,
+            thumb=T.SUBTLE,
+            hover=T.MUTED,
+        )
         tune_scrollable(self.body, self.app.scale)
         self._tab_frames: dict[str, ctk.CTkFrame] = {}
         for key, _label in self.TABS:
